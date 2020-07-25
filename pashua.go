@@ -11,9 +11,8 @@ import (
 	"strings"
 )
 
+// CompletionMode is a type to store the completion mode for a combobox
 type CompletionMode string
-
-type FontSize string
 
 const (
 	NoCompletion    CompletionMode = "0"
@@ -21,12 +20,16 @@ const (
 	CaseInsensitive                = "2"
 )
 
+// FontSize is a type to store the fontsize of a Pashua window
+type FontSize string
+
 const (
 	Regular FontSize = "regular"
 	Small            = "small"
 	Mini             = "mini"
 )
 
+// PashuaButton is a structure that holds all information for a PashuaButton
 type PashuaButton struct {
 	Label    string
 	X        int
@@ -35,12 +38,14 @@ type PashuaButton struct {
 	Tooltip  string
 }
 
+// PashuaCancelButton is a structure that holds all information for a PashuaCancelButton
 type PashuaCancelButton struct {
 	Label    string
 	Disabled bool
 	Tooltip  string
 }
 
+// PashuaCheckbox is a structure that holds all information for a PashuaCheckbox
 type PashuaCheckbox struct {
 	Label    string
 	Default  bool
@@ -52,6 +57,7 @@ type PashuaCheckbox struct {
 	RelY     int
 }
 
+// PashuaCombobox is a structure that holds all information for a PashuaCombobox
 type PashuaCombobox struct {
 	Label          string
 	Option         []string
@@ -68,6 +74,7 @@ type PashuaCombobox struct {
 	RelY           int
 }
 
+// PashuaDate is a structure that holds all information for a PashuaDate
 type PashuaDate struct {
 	Label    string
 	Textual  bool
@@ -80,12 +87,14 @@ type PashuaDate struct {
 	Y        int
 }
 
+// PashuaDefaultButton is a structure that holds all information for a PashuaDefaultButton
 type PashuaDefaultButton struct {
 	Label    string
 	Disabled bool
 	Tooltip  string
 }
 
+// PashuaImage is a structure that holds all information for a PashuaImage
 type PashuaImage struct {
 	Label     string
 	Path      string
@@ -102,6 +111,7 @@ type PashuaImage struct {
 	RelY      int
 }
 
+// PashuaOpenBrowser is a structure that holds all information for a PashuaOpenBrowser
 type PashuaOpenBrowser struct {
 	Label       string
 	DefaultPath string
@@ -115,6 +125,7 @@ type PashuaOpenBrowser struct {
 	RelY        int
 }
 
+// PashuaPassword is a structure that holds all information for a PashuaPassword
 type PashuaPassword struct {
 	Label     string
 	Default   bool
@@ -128,6 +139,7 @@ type PashuaPassword struct {
 	RelY      int
 }
 
+// PashuaPopup is a structure that holds all information for a PashuaPopup
 type PashuaPopup struct {
 	Option    []string
 	Default   string
@@ -142,6 +154,7 @@ type PashuaPopup struct {
 	RelY      int
 }
 
+// PashuaRadioButton is a structure that holds all information for a PashuaRadioButton
 type PashuaRadioButton struct {
 	Option    []string
 	Default   string
@@ -155,6 +168,7 @@ type PashuaRadioButton struct {
 	RelY      int
 }
 
+// PashuaSaveBrowser is a structure that holds all information for a PashuaSaveBrowser
 type PashuaSaveBrowser struct {
 	Label       string
 	DefaultPath string
@@ -168,6 +182,7 @@ type PashuaSaveBrowser struct {
 	RelY        int
 }
 
+// PashuaText is a structure that holds all information for a PashuaText
 type PashuaText struct {
 	Label   string
 	Text    string
@@ -179,6 +194,7 @@ type PashuaText struct {
 	RelY    int
 }
 
+// PashuaTextBox is a structure that holds all information for a PashuaTextBox
 type PashuaTextBox struct {
 	Label     string
 	Default   string
@@ -195,6 +211,7 @@ type PashuaTextBox struct {
 	RelY      int
 }
 
+// PashuaTextField is a structure that holds all information for a PashuaTextField
 type PashuaTextField struct {
 	Label     string
 	Default   string
@@ -208,8 +225,10 @@ type PashuaTextField struct {
 	RelY      int
 }
 
+// PashuaComponents is type for th elist of components contained in a Pashua window
 type PashuaComponents map[string]interface{}
 
+//  PashuaWindow is the top-most structure when defininng a dialog window for Pashua
 type PashuaWindow struct {
 	AutoCloseTime int
 	AutoSaveKey   string
@@ -221,6 +240,8 @@ type PashuaWindow struct {
 	Components    PashuaComponents
 }
 
+// fileExists is a helper function that returns true
+// if a specified file exists and is a file
 func fileExists(filename string) bool {
 	info, err := os.Stat(filename)
 	if os.IsNotExist(err) {
@@ -229,6 +250,10 @@ func fileExists(filename string) bool {
 	return (info != nil) && !info.IsDir()
 }
 
+// LocatePashua is one of the two main binding function
+// and tries to find the Pashua.app and the executable contained
+// within the app container by iterating over the standard
+// file locations. Returns the location path and an error code
 func LocatePashua(pashuaPath string) (string, error) {
 	const bundlePath = "Pashua.app/Contents/MacOS/Pashua"
 	usr, err := user.Current()
@@ -246,6 +271,8 @@ func LocatePashua(pashuaPath string) (string, error) {
 	}
 	if pashuaPath != "" {
 		// insert at index 0
+		// yeah, in Go there is no "insert" function,
+		// so this is a little tricky at first
 		pashuaPlaces = append(pashuaPlaces, "")
 		copy(pashuaPlaces[1:], pashuaPlaces[0:])
 		pashuaPlaces[0] = pashuaPath
@@ -259,21 +286,9 @@ func LocatePashua(pashuaPath string) (string, error) {
 	return "", fmt.Errorf("Could not locate pashua")
 }
 
-func parsePashuaOutput(output string) map[string]string {
-	result := make(map[string]string)
-	lines := strings.Split(output, "\n")
-	for _, line := range lines {
-		line = strings.TrimSpace(line)
-		pos := strings.Index(line, "=")
-		if line != "" && pos > 0 {
-			key := line[:pos]
-			value := line[pos+1:]
-			result[key] = value
-		}
-	}
-	return result
-}
-
+// RunPashua is one of the two main binding function.
+// it sets up a pipe and executes Pashua as an external command,
+// then converts the STdOut and StdErr to strings and parses the output
 func RunPashua(configData string, pashuaPath string) (map[string]string, error) {
 	var err error
 	result := make(map[string]string)
@@ -295,6 +310,33 @@ func RunPashua(configData string, pashuaPath string) (map[string]string, error) 
 	return result, err
 }
 
+// RunPashuaWithStruct is a convenience function that saves you
+// from having to convert a struct-based window definition to a string first
+func RunPashuaWithStruct(pashuaWindow *PashuaWindow, pashuaPath string) (map[string]string, error) {
+	configString := pashuaWindow.ToString()
+	return RunPashua(configString, pashuaPath)
+}
+
+// parsePashuaOutput takes a list of lines and
+// converts key=value pairs to a map and
+// skips empty lines of lines without an "="
+func parsePashuaOutput(output string) map[string]string {
+	result := make(map[string]string)
+	lines := strings.Split(output, "\n")
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		pos := strings.Index(line, "=")
+		if line != "" && pos > 0 {
+			key := line[:pos]
+			value := line[pos+1:]
+			result[key] = value
+		}
+	}
+	return result
+}
+
+// getFieldValue converts various types to a string
+// representation as Pashua needs the configuration as string
 func getFieldValue(field interface{}) string {
 	result := ""
 	switch field.(type) {
@@ -329,6 +371,14 @@ func getFieldValue(field interface{}) string {
 	}
 	return result
 }
+
+/*
+the function below convert each possible component type
+into a config string that Pashua con use.
+the "ToString()" of the PashuaWindow iterates over all
+defines component and combines them into a large config string
+that can be provided to Pashua
+*/
 
 func (btn *PashuaButton) ToString(key string) string {
 	result := []string{key + ".type=button"}
@@ -552,15 +602,35 @@ func (txt *PashuaTextField) ToString(key string) string {
 	return strings.Join(result, "\n")
 }
 
+func (win *PashuaWindow) WindowToString() string {
+	result := []string{}
+	autoSaveKey := getFieldValue(win.AutoSaveKey)
+	title := getFieldValue(win.Title)
+	if title != "" {
+		result = append(result, "*.title="+title)
+	}
+	if win.Transparency > 0 {
+		// do not display invisible dialogs ;-)
+		result = append(result, "*.transparency="+getFieldValue(win.Transparency))
+	}
+	if win.AutoCloseTime > 1 {
+		result = append(result, "*.autoclosetime="+getFieldValue(win.AutoCloseTime))
+	}
+	if autoSaveKey != "" {
+		result = append(result, "*.autosavekey="+autoSaveKey)
+	} else {
+		result = append(result, "*.x="+getFieldValue(win.X))
+		result = append(result, "*.y="+getFieldValue(win.Y))
+	}
+	if win.Floating {
+		result = append(result, "*.floating=1")
+	}
+	return strings.Join(result, "\n")
+}
+
 func (win *PashuaWindow) ToString() string {
 	var result = []string{}
-	result = append(result, "*.title="+getFieldValue(win.Title))
-	result = append(result, "*.transparency="+getFieldValue(win.Transparency))
-	result = append(result, "*.autoclosetime="+getFieldValue(win.AutoCloseTime))
-	result = append(result, "*.autosavekey="+getFieldValue(win.AutoSaveKey))
-	result = append(result, "*.floating="+getFieldValue(win.Floating))
-	result = append(result, "*.x="+getFieldValue(win.X))
-	result = append(result, "*.y="+getFieldValue(win.Y))
+	result = append(result, win.WindowToString())
 	for key, comp := range win.Components {
 		switch comp.(type) {
 		case PashuaButton:

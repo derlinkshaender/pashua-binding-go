@@ -6,15 +6,18 @@ import (
 )
 
 func main() {
+	// look for Pashua and bail out, if not found in the standard locations
 	p, e := pashua.LocatePashua("")
 	if e != nil {
 		panic(e)
 	}
 	fmt.Println("Found Pashua at", p)
 
+	// define a window to show some of the components
 	cfg := pashua.PashuaWindow{
 		Title:        "Dialog Box",
-		Transparency: 0.75,
+		AutoSaveKey: "hurga",
+		Transparency: 1,
 		Components: pashua.PashuaComponents{
 			"tf": pashua.PashuaTextField{
 				Label:   "Gib was ein",
@@ -34,22 +37,40 @@ func main() {
 				Label:   "TickTock",
 				Tooltip: "A Date/Time control",
 				UseDate: true,
-				UseTime: true,
-				Default: "2020-07-23",
+				UseTime: false,
+				Default: "2020-07-04",
 				Textual: false,
 				Y:       120,
 			},
 			"ok": pashua.PashuaDefaultButton{
 				Label:   "OK",
-				Tooltip: "Hier klicken zum Ausführen",
+				Tooltip: "Click here to submit dialog",
+			},
+			"cancel": pashua.PashuaCancelButton{
+				Label:   "Cancel",
+				Tooltip: "",
 			},
 		},
 	}
-	s := cfg.ToString()
-	fmt.Println(s)
-	res, err := pashua.RunPashua(s, "")
-	fmt.Println(res, err)
-	fmt.Println("Done.")
 
+	// take the struct definition of a Pashua window and
+	// convert it into a string that Pashua can use
+	// then run the tool
+	//
+	// this is functionally euqivalent to calling the
+	// convenience function "RunPashuaWithStruct" like so:
+	// res, err := RunPashuaWithStruct(&cfg, "")
+	s := cfg.ToString()
+	res, err := pashua.RunPashua(s, "")
+	if err != nil {
+		panic(err)
+	}
+
+	// display the resulting map
+	fmt.Println("== Result ==")
+	for key, value := range res {
+		fmt.Println(key, "=", value)
+	}
+	fmt.Println("Done.")
 }
 

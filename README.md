@@ -14,18 +14,22 @@ Other related links:
 
 ## Usage
 
-This repository contains two code files:
+The file `pashua.go` contains the binding code itself as a package
 
-* `pashua.go` contains the binding code itself as a package
-* `example.go` is an example, which does not do much more than define how the dialog window should look like and use the functions in the `pashua.go` file.
-* You need to habe [Pashua](https://www.bluem.net/jump/pashua) installed on your Mac to make use of this repository. The code expects Pashua.app in one of the “typical” locations, such as the global or the user’s “Applications” folder, or in the folder which contains `example.go`.
+The folder `example` contains an example, which does not do much more 
+than define how the dialog window should look like and use the functions in the `pashua.go` file.
 
+You need to habe [Pashua](https://www.bluem.net/jump/pashua) installed on your Mac 
+to make use of this repository. 
+The code expects Pashua.app in one of the “typical” locations, such as the global or 
+the user’s “Applications” folder, or in the folder which contains `example.go`.
 
 ## Compatibility
 
 This code 
 
-It is compatible and has been tested with Pashua 0.11. It requires a version of Pashua that handles UTF-8 encoded input.
+It is compatible and has been tested with Pashua 0.11. 
+It requires a version of Pashua that handles UTF-8 encoded input.
 
 
 ## Author
