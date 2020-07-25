@@ -1,4 +1,4 @@
-# Pashua-Bindung-Go
+# Pashua-Binding-Go
 
 Binding code to use Pashua from Go programms
 
